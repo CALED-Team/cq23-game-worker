@@ -30,7 +30,7 @@ cd "$CLIENT2_DIR" || exit
 cp "${DOCKERFILES_DIR}/client_base" "Dockerfile"
 docker build . -t "$CLIENT2_TARGET_IMAGE"
 
-cd "$SRC_DIR" || exit
+cd $GCS_DIR/src || exit
 cat <<EOF > _temp_clients_file.json
 [
   {
@@ -46,6 +46,5 @@ cat <<EOF > _temp_clients_file.json
 ]
 EOF
 
-cd $GCS_DIR/src
 python3 controller.py "$SERVER_TARGET_IMAGE" _temp_clients_file.json
 rm _temp_clients_file.json
