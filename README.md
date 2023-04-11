@@ -1,15 +1,20 @@
-# Repo template
+# CQ Game Worker 23
 
-Use this repo as a starting point for new repositories, if it suits you.
+This repo is used to run a game between two clients and the game server
 
-When using with your own repo you'll need to install pre-commit and then initialize it in the repo.
+## Usage
 
-Installation can be done with pip:
-```shell
-pip install pre-commit
-```
+Place the game server, game client and the game communication system folders at the same level
 
-And init:
-```
-pre-commit install
+ws/
+├─ game-client-2/
+├─ game-client-1/
+├─ game-communication-system/
+├─ game-server/
+├─ game-worker/
+
+Use the following command to build the client and server docker images and run the game worker
+
+```sh
+bin/debug_run.sh <<cq-server-folder>> <<cq-client1-folder>> <<cq-client2-folder>> <<cq-gcs-folder>>
 ```
