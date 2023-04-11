@@ -45,5 +45,5 @@ cat <<EOF > _temp_clients_file.json
   }
 ]
 EOF
-python3 $GCS_DIR/controller.py "$SERVER_TARGET_IMAGE" _temp_clients_file.json
+python3 $GCS_DIR/src/controller.py "$SERVER_TARGET_IMAGE" _temp_clients_file.json
 rm _temp_clients_file.json
