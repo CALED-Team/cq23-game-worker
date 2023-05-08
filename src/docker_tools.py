@@ -1,11 +1,11 @@
 import base64
 import os
-import shutil
 import pathlib
+import shutil
 
 import boto3
 import docker
-from docker.errors import ImageNotFound, NotFound, APIError
+from docker.errors import APIError, ImageNotFound, NotFound
 
 AWS_REGION = "ap-southeast-2"
 ECR_REGISTRY = os.environ.get("ECR_REGISTRY")
@@ -28,14 +28,16 @@ username, password = (
 )
 registry = token["authorizationData"][0]["proxyEndpoint"]
 if str(registry).startswith("https://"):
-    registry = registry[len("https://"):]
+    registry = registry[8:]
 
 DOCKER_CLIENT = docker.from_env()
 DOCKER_CLIENT.login(username, password, registry=registry)
 
 
 def get_submission_image_tag(submission_id):
-    return f"{ECR_REGISTRY}/{SUBMISSIONS_ECR_REPO}:{IMAGE_TAG_PREFIX}{str(submission_id)}"
+    return (
+        f"{ECR_REGISTRY}/{SUBMISSIONS_ECR_REPO}:{IMAGE_TAG_PREFIX}{str(submission_id)}"
+    )
 
 
 def get_server_image_tag():
@@ -63,11 +65,16 @@ def pull_submissions(submissions: list):
             DOCKER_CLIENT.images.get(submission_image)
             print(f"Image for submission {str(submission['id'])} already exists.")
         except ImageNotFound:
-            print(f"Image for submission {str(submission['id'])} doesn't exist, pulling... ", end="")
+            print(
+                f"Image for submission {str(submission['id'])} doesn't exist, pulling... ",
+                end="",
+            )
             DOCKER_CLIENT.images.pull(submission_image)
             print("done!")
         except NotFound:
-            print(f"Image for submission {str(submission['id'])} not found! Match failed.")
+            print(
+                f"Image for submission {str(submission['id'])} not found! Match failed."
+            )
             return False
 
     return True
@@ -103,7 +110,7 @@ def copy_replay_files():
         remove=True,
         volumes={
             volume_name: {"bind": "/data", "mode": "ro"},
-            f"{pwd}/{local_dir}": {"bind": f"/{local_dir}", "mode": "rw"}
+            f"{pwd}/{local_dir}": {"bind": f"/{local_dir}", "mode": "rw"},
         },
     )
 

@@ -1,13 +1,11 @@
 import json
+import os
 import subprocess
 import sys
 import time
-import os
-import shutil
 
 import api
 import docker_tools
-
 
 GCS_DIR = "game-communication-system/src"
 CLIENTS_FILE_ADDRESS = "_cq-gcs-clients.json"
@@ -17,11 +15,13 @@ MATCH_TIMEOUT_SECONDS = 12 * 60
 def run_gcs(match):
     clients_file_content = []
     for submission in match["submissions"]:
-        clients_file_content.append({
-            "id": submission["team_id"],
-            "name": submission["team_name"],
-            "image": docker_tools.get_submission_image_tag(submission["id"])
-        })
+        clients_file_content.append(
+            {
+                "id": submission["team_id"],
+                "name": submission["team_name"],
+                "image": docker_tools.get_submission_image_tag(submission["id"]),
+            }
+        )
 
     with open(GCS_DIR + "/" + CLIENTS_FILE_ADDRESS, "w") as f:
         f.write(json.dumps(clients_file_content))
@@ -30,7 +30,7 @@ def run_gcs(match):
         sys.executable,
         "controller.py",
         docker_tools.get_server_image_tag(),
-        CLIENTS_FILE_ADDRESS
+        CLIENTS_FILE_ADDRESS,
     ]
     subprocess.run(subprocess_args, timeout=MATCH_TIMEOUT_SECONDS, cwd=GCS_DIR)
     os.remove(GCS_DIR + "/" + CLIENTS_FILE_ADDRESS)
@@ -39,8 +39,21 @@ def run_gcs(match):
 if __name__ == "__main__":
     print("Starting the main loop...")
     while True:
-        # match = api.get_pending_match()
-        match = {'id': 8, 'submissions': [{'id': 2, 'team_id': 1, 'team_name': 'Test Team 1'}, {'id': 3, 'team_id': 3, 'team_name': 'Test TEAM 2'}], 'context': {'map': 'map2.txt', 'game': 'game2'}, 'last_requested_at': '2023-05-08T21:36:49.460208+10:00', 'played_status': 'playing', 'play_attempts': 2, 'results': None, 'match_group': 1}
+        match = api.get_pending_match()
+        # For testing:
+        # match = {
+        #     "id": 8,
+        #     "submissions": [
+        #         {"id": 2, "team_id": 1, "team_name": "Test Team 1"},
+        #         {"id": 3, "team_id": 3, "team_name": "Test TEAM 2"},
+        #     ],
+        #     "context": {"map": "map2.txt", "game": "game2"},
+        #     "last_requested_at": "2023-05-08T21:36:49.460208+10:00",
+        #     "played_status": "playing",
+        #     "play_attempts": 2,
+        #     "results": None,
+        #     "match_group": 1,
+        # }
         print("Received match:")
         print(match)
 
@@ -51,7 +64,9 @@ if __name__ == "__main__":
             fetch_result &= docker_tools.pull_submissions(match["submissions"])
 
             if not fetch_result:
-                print("Something went wrong with pulling the images! Going to the next match...")
+                print(
+                    "Something went wrong with pulling the images! Going to the next match..."
+                )
                 continue
 
             print("Running the GCS...")
