@@ -1,0 +1,3 @@
+[submodule "game-communication-system"]
+	path = game-communication-system
+	url = git@github.com:CALED-Team/game-communication-system.git

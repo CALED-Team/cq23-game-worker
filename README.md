@@ -1,20 +1,8 @@
-# CQ Game Worker 23
+# CQ23 Game Worker
 
-This repo is used to run a game between two clients and the game server
+The game worker is responsible for:
 
-## Usage
-
-Place the game server, game client and the game communication system folders at the same level
-
-ws/
-├─ game-client-2/
-├─ game-client-1/
-├─ game-communication-system/
-├─ game-server/
-├─ game-worker/
-
-Use the following command to build the client and server docker images and run the game worker
-
-```sh
-bin/debug_run.sh <<cq-server-folder>> <<cq-client1-folder>> <<cq-client2-folder>> <<cq-gcs-folder>>
-```
+1. Fetching a match from the teams portal
+2. Downloading the clients of that match and the latest game server
+3. Running the match by connecting the clients and game server through GCS
+4. Sending the results back to the teams portal
