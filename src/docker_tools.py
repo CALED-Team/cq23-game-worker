@@ -82,7 +82,7 @@ def pull_submissions(submissions: list):
 
 def copy_replay_files():
     volume_name = "cq-game-replay"
-    local_dir = "replay_files_2"
+    local_dir = "_replay_files"
 
     # Ensure the local directory exists and is empty
     os.makedirs(local_dir, exist_ok=True)

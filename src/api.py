@@ -1,3 +1,4 @@
+import json
 import os
 
 import requests as r
@@ -40,14 +41,36 @@ def get_pending_match():
     return data
 
 
-# def set_submission_build_status(submission_id, status):
-#     try:
-#         response = r.post(
-#             UPDATE_STATUS_ENDPOINT.format(id=submission_id),
-#             json={"status": status},
-#             **DEFAULT_REQUEST_PARAMS,
-#         )
-#         data = response.json()
-#         print(f"Set build status for submission {submission_id}: {data['message']}")
-#     except Exception as e:
-#         print(f"Error when setting submission status for id {submission_id}:", str(e))
+def send_match_results_back(match):
+    results_file = "_replay_files/results.json"
+    try:
+        with open(results_file) as f:
+            results = json.loads(f.read())
+    except FileNotFoundError:
+        print("Results file not found!")
+        return
+
+    try:
+        winner = str(results["victor"][0])
+        loser = str(results["vanquished"][0])
+    except (IndexError, KeyError):
+        print("Results file is invalid, not sending it back to teams portal.")
+        return
+
+    valid_team_ids = [str(x["team_id"]) for x in match["submissions"]]
+    if winner not in valid_team_ids or loser not in valid_team_ids:
+        print(
+            "Team ids in results file do not match the ids in match object, not sending back to teams portal."
+        )
+        return
+
+    try:
+        response = r.post(
+            SAVE_RESULTS_ENDPOINT.format(id=match["id"]),
+            json={winner: 1, loser: 0},
+            **DEFAULT_REQUEST_PARAMS,
+        )
+        data = response.json()
+        print(f"Saved match results for id {match['id']}: {data['message']}")
+    except Exception as e:
+        print(f"Error when saving match results for id {match['id']}:", str(e))
