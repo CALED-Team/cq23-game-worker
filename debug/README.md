@@ -12,5 +12,5 @@ folder/
 Use the following command to build the client and server docker images and run the game worker:
 
 ```sh
-bin/debug_run.sh <<cq-server-folder>> <<cq-client1-folder>> <<cq-client2-folder>> <<cq-gcs-folder>>
+debug/bin/debug_run.sh <<cq-server-folder>> <<cq-client1-folder>> <<cq-client2-folder>> <<cq-gcs-folder>>
 ```

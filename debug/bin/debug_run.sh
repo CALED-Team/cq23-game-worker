@@ -3,7 +3,7 @@
 # Creates a test image based on the server_base dockerfile and runs the server + two clients with that image.
 
 # shellcheck disable=SC2164
-WORKER_DIR="$( dirname "$(cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )" )"
+WORKER_DIR="$( dirname $( dirname "$(cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )" ))"
 BIN_DIR="${WORKER_DIR}/bin"
 DOCKERFILES_DIR="${WORKER_DIR}/dockerfiles"
 BASE_DIR="$(dirname $WORKER_DIR)"
@@ -19,15 +19,12 @@ CLIENT2_TARGET_IMAGE=$3
 CLIENT2_DIR="$BASE_DIR/$CLIENT2_TARGET_IMAGE"
 
 cd "$SERVER_DIR" || exit
-cp "${DOCKERFILES_DIR}/server_base" "Dockerfile"
-docker build . -t "$SERVER_TARGET_IMAGE"
+docker build . -f Dockerfile.local -t "$SERVER_TARGET_IMAGE"
 
 cd "$CLIENT1_DIR" || exit
-cp "${DOCKERFILES_DIR}/client_base" "Dockerfile"
 docker build . -t "$CLIENT1_TARGET_IMAGE"
 
 cd "$CLIENT2_DIR" || exit
-cp "${DOCKERFILES_DIR}/client_base" "Dockerfile"
 docker build . -t "$CLIENT2_TARGET_IMAGE"
 
 cd $GCS_DIR/src || exit
