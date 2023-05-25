@@ -64,6 +64,16 @@ def print_gcs_logs_in_replay_volume(gcs_logs):
             f.write(gcs_logs.stderr)
 
 
+def copy_container_logs_to_replay_volume():
+    src_directory = os.path.join(GCS_DIR, "container_logs")
+    dst_directory = "_replay_files"
+    for filename in os.listdir(src_directory):
+        src_file = os.path.join(src_directory, filename)
+        dst_file = os.path.join(dst_directory, filename)
+        # Copy the file to the destination directory
+        shutil.copy2(src_file, dst_file)
+
+
 if __name__ == "__main__":
     print("Starting the main loop...")
     while True:
@@ -111,6 +121,7 @@ if __name__ == "__main__":
                 print("Replay files copied.")
 
             print_gcs_logs_in_replay_volume(gcs_logs)
+            copy_container_logs_to_replay_volume()
             aws.move_replay_volume_to_s3(match)
             api.send_match_results_back(match)
             shutil.rmtree("_replay_files")
