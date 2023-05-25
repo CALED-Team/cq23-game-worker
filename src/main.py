@@ -38,7 +38,7 @@ def run_gcs(match):
     match_context = match["context"]
     if type(match_context) == dict and "map" in match_context:
         subprocess_args.append("--server-arg")
-        subprocess_args.append(match_context["map"])
+        subprocess_args.append(f"-m {match_context['map']}")
 
     gcs_logs = subprocess.run(
         subprocess_args,
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                     {"id": 2, "team_id": 1, "team_name": "Test Team 1"},
                     {"id": 2, "team_id": 3, "team_name": "Test TEAM 2"},
                 ],
-                "context": {"map": "map2.txt", "game": "game2"},
+                "context": {"map": "nuketown.map", "game": "game2"},
                 "last_requested_at": "2023-05-08T21:36:49.460208+10:00",
                 "played_status": "playing",
                 "play_attempts": 2,
