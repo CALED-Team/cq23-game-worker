@@ -331,3 +331,6 @@ eastern_bots/media/
 .env
 .envs/*
 !.envs/.local/
+
+# Files created by the cli tool
+.cq23cli*
