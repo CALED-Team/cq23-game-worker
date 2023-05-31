@@ -29,7 +29,7 @@ Variable definitions:
 
 ### Deployment
 
-The AWS role connected to this service needs `ecr:GetAuthorizationToken` permission to be able to login to the ECR (or `AmazonEC2ContainerRegistryFullAccess`) and full access to S3 to upload the replay files.
+The AWS role connected to this service needs `ecr:GetAuthorizationToken` permission to be able to login to the ECR (or `AmazonEC2ContainerRegistryFullAccess` and `AmazonElasticContainerRegistryPublicFullAccess`) and full access to S3 to upload the replay files.
 
 In order to deploy new workers, create an EC2 instance, apply the required roles and permissions (above) then run:
 ```shell
