@@ -7,7 +7,7 @@ import boto3
 import docker
 from docker.errors import APIError, ImageNotFound, NotFound
 
-AWS_REGION = "ap-southeast-2"
+AWS_REGION = "us-east-1"
 ECR_REGISTRY = os.environ.get("ECR_REGISTRY")
 SUBMISSIONS_ECR_REPO = os.environ.get("SUBMISSIONS_ECR_REPO")
 GAME_SERVER_ECR_REPO = os.environ.get("GAME_SERVER_ECR_REPO")
@@ -17,21 +17,18 @@ if SUBMISSIONS_ECR_REPO is None or ECR_REGISTRY is None:
     print("ECR details should be provided in the env vars, bye.")
     quit()
 
-ECR_CLIENT = boto3.client("ecr", region_name=AWS_REGION)
+ECR_CLIENT = boto3.client("ecr-public", region_name=AWS_REGION)
 
 # Authenticate Docker to ECR registry
 token = ECR_CLIENT.get_authorization_token()
 username, password = (
-    base64.b64decode(token["authorizationData"][0]["authorizationToken"])
+    base64.b64decode(token["authorizationData"]["authorizationToken"])
     .decode()
     .split(":")
 )
-registry = token["authorizationData"][0]["proxyEndpoint"]
-if str(registry).startswith("https://"):
-    registry = registry[8:]
 
 DOCKER_CLIENT = docker.from_env()
-DOCKER_CLIENT.login(username, password, registry=registry)
+DOCKER_CLIENT.login(username, password, registry=ECR_REGISTRY)
 
 
 def get_submission_image_tag(submission_id):
