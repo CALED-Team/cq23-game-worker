@@ -2,6 +2,7 @@ rm -rf ~/codequest || echo "codequest directory doesn't exist, creating it..."
 mkdir -p ~/codequest/repo
 cd ~/codequest || exit
 
+sudo apt update
 sudo apt install -y make python3-pip
 
 curl -fsSL https://get.docker.com -o get-docker.sh
