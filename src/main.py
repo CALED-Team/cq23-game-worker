@@ -12,7 +12,7 @@ import docker_tools
 GCS_DIR = "game-communication-system/src"
 CLIENTS_FILE_ADDRESS = "_cq-gcs-clients.json"
 MATCH_TIMEOUT_SECONDS = 12 * 60
-DEBUG = True
+DEBUG = False
 
 
 def run_gcs(match):
