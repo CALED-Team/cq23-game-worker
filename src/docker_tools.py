@@ -18,17 +18,18 @@ if SUBMISSIONS_ECR_REPO is None or ECR_REGISTRY is None:
     quit()
 
 ECR_CLIENT = boto3.client("ecr-public", region_name=AWS_REGION)
-
-# Authenticate Docker to ECR registry
-token = ECR_CLIENT.get_authorization_token()
-username, password = (
-    base64.b64decode(token["authorizationData"]["authorizationToken"])
-    .decode()
-    .split(":")
-)
-
 DOCKER_CLIENT = docker.from_env()
-DOCKER_CLIENT.login(username, password, registry=ECR_REGISTRY)
+
+
+def authenticate_docker_client():
+    # Authenticate Docker to ECR registry
+    token = ECR_CLIENT.get_authorization_token()
+    username, password = (
+        base64.b64decode(token["authorizationData"]["authorizationToken"])
+        .decode()
+        .split(":")
+    )
+    DOCKER_CLIENT.login(username, password, registry=ECR_REGISTRY)
 
 
 def get_submission_image_tag(submission_id):

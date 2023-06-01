@@ -76,7 +76,13 @@ def copy_container_logs_to_replay_volume():
 
 if __name__ == "__main__":
     print("Starting the main loop...")
+    remaining_turns_until_refresh = 0
     while True:
+        remaining_turns_until_refresh -= 1
+        if remaining_turns_until_refresh <= 0:
+            docker_tools.authenticate_docker_client()
+            remaining_turns_until_refresh = 100
+
         if DEBUG:
             match = {
                 "id": 8,
