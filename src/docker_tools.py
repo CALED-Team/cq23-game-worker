@@ -22,6 +22,8 @@ DOCKER_CLIENT = docker.from_env()
 
 
 def authenticate_docker_client():
+    global DOCKER_CLIENT
+    print("Authenticating docker client...")
     # Authenticate Docker to ECR registry
     token = ECR_CLIENT.get_authorization_token()
     username, password = (
@@ -29,7 +31,8 @@ def authenticate_docker_client():
         .decode()
         .split(":")
     )
-    DOCKER_CLIENT.login(username, password, registry=ECR_REGISTRY)
+    DOCKER_CLIENT = docker.from_env()
+    print(DOCKER_CLIENT.login(username, password, registry=ECR_REGISTRY))
 
 
 def get_submission_image_tag(submission_id):
