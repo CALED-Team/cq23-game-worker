@@ -51,23 +51,30 @@ def send_match_results_back(match):
         return
 
     try:
-        winner = str(results["victor"][0])
-        loser = str(results["vanquished"][0])
+        winner = str(results["victor"][0]) if len(results["victor"]) > 0 else None
+        losers = list(map(str, results["vanquished"]))
     except (IndexError, KeyError):
         print("Results file is invalid, not sending it back to teams portal.")
         return
 
     valid_team_ids = [str(x["team_id"]) for x in match["submissions"]]
-    if winner not in valid_team_ids or loser not in valid_team_ids:
+    if (winner is not None and winner not in valid_team_ids) or any(
+        [loser not in valid_team_ids for loser in losers]
+    ):
         print(
             "Team ids in results file do not match the ids in match object, not sending back to teams portal."
         )
         return
 
     try:
+        res = {}
+        for loser in losers:
+            res[loser] = 0
+        if winner is not None:
+            res[winner] = 1
         response = r.post(
             SAVE_RESULTS_ENDPOINT.format(id=match["id"]),
-            json={winner: 1, loser: 0},
+            json=res,
             **DEFAULT_REQUEST_PARAMS,
         )
         data = response.json()
